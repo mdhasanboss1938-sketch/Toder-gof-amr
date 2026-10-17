@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#1a0025" />
+<title>Wish Master Studio ❤️</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Wish Master Studio","short_name":"WishMaster","start_url":"./index.html","display":"standalone","background_color":"%2312001c","theme_color":"%231a0025","description":"Romantic Surprise Wish App","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3771/3771067.png","sizes":"512x512","type":"image/png"}]}'>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ==== ROOT ==== */
+:root {
+  --bg-deep: #12001c; --bg-purple: #2a003d; --bg-burgundy: #3a0520;
+  --pink: #ff1f7a; --pink-soft: #ff6fb5; --pink-glow: rgba(255, 31, 122, .7);
+  --purple: #b04dff; --gold: #ffd166; --white: #fff; --muted: #d8c5e0;
+  --card-bg: rgba(255,255,255,.055); --card-border: rgba(255,111,181,.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow-x:hidden; }
+body {
+  font-family: 'Hind Siliguri', system-ui, sans-serif; color: var(--white); 
+  background: linear-gradient(150deg, var(--bg-deep) 0%, var(--bg-purple) 40%, var(--bg-burgundy) 100%);
+  background-attachment: fixed; min-height: 100vh; position: relative; overflow-x: hidden;
+}
+body::before {
+  content:''; position: fixed; inset:0;
+  background: radial-gradient(circle at 15% 20%, rgba(255,31,122,.18), transparent 45%), radial-gradient(circle at 85% 80%, rgba(176,77,255,.18), transparent 45%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ==== NOTICE BANNER ==== */
+#noticeBanner {
+  position: fixed; top: 0; left: 0; width: 100%; background: var(--gold); color: #000; 
+  text-align: center; padding: 8px; font-size: 13px; font-weight: bold; z-index: 1000;
+  display: none; box-shadow: 0 2px 10px rgba(0,0,0,.5);
+}
+
+/* ==== SCREENS ==== */
+.screen {
+  display:none; min-height: 100vh; padding: 22px 18px; position: relative; z-index: 2;
+  flex-direction: column; align-items: center; justify-content: center; animation: screenIn .55s cubic-bezier(.34,1.2,.64,1);
+}
+.screen.active { display: flex; }
+@keyframes screenIn { from { opacity:0; transform: translateY(20px) scale(.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+
+/* ==== BRAND ==== */
+.brand { text-align: center; margin-bottom: 18px; }
+.brand h1 {
+  font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; letter-spacing: 1.5px; color: var(--gold);
+  text-shadow: 0 0 10px rgba(255,209,102,.7), 0 0 25px rgba(255,31,122,.4); animation: goldGlow 2.5s ease-in-out infinite alternate;
+}
+@keyframes goldGlow { from { text-shadow: 0 0 8px rgba(255,209,102,.6); } to { text-shadow: 0 0 18px rgba(255,209,102,.95), 0 0 40px rgba(255,31,122,.7); } }
+.brand .tag { font-size: 12.5px; color: var(--pink-soft); letter-spacing: 2px; margin-top: 8px; text-transform: uppercase; }
+
+/* ==== TYPING EFFECT ==== */
+.typing-text { font-size: 18px; line-height: 1.8; text-align: center; min-height: 80px; color: #fff; white-space: pre-wrap; }
+.typing-text .cursor { display: inline-block; width: 2px; height: 18px; background: var(--pink); animation: blink 0.8s infinite; vertical-align: middle; margin-left: 2px; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ==== CARD ==== */
+.card {
+  width: 100%; max-width: 400px; background: var(--card-bg); backdrop-filter: blur(16px);
+  border: 1.5px solid var(--card-border); border-radius: 26px; padding: 24px 22px;
+  box-shadow: 0 0 25px rgba(255,31,122,.3); position: relative; text-align: center;
+}
+
+/* ==== FORM ==== */
+.field { margin-bottom: 14px; text-align: left; }
+.field label { display: block; font-size: 13px; font-weight: 600; color: var(--pink-soft); margin-bottom: 6px; }
+.field input, .field textarea, .field select {
+  width: 100%; padding: 13px 15px; border-radius: 14px; border: 1.5px solid var(--card-border); 
+  background: rgba(0,0,0,.3); color: var(--white); font-size: 15px; font-family: inherit; outline: none; transition: all .25s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--pink); box-shadow: 0 0 15px var(--pink-glow); }
+.field textarea { resize: none; min-height: 92px; }
+.field select option { background: #12001c; color: #fff; }
+
+/* ==== PHOTO & FRAMES ==== */
+.photo-upload { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
+.photo-circle {
+  width: 96px; height: 96px; border-radius: 50%; border: 3px dashed var(--pink-soft); background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; font-size: 30px; color: var(--pink-soft); transition: all .3s;
+}
+.photo-circle.filled { border-style: solid; box-shadow: 0 0 22px var(--pink-glow); }
+.photo-circle img { width:100%; height:100%; object-fit:cover; }
+.photo-hint { font-size: 11.5px; color: var(--muted); }
+
+.frame-pink { border: 4px solid var(--pink) !important; }
+.frame-gold { border: 4px solid var(--gold) !important; }
+.frame-purple { border: 4px solid var(--purple) !important; }
+.frame-none { border: 2px solid var(--card-border) !important; }
+
+/* ==== BUTTONS ==== */
+.btn {
+  display: block; width: 100%; padding: 15px; border: none; border-radius: 30px;
+  background: linear-gradient(90deg, var(--pink), var(--purple), var(--pink)); background-size: 200% 100%;
+  color: #fff; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer;
+  box-shadow: 0 0 22px var(--pink-glow); transition: transform .15s;
+}
+.btn:active { transform: scale(.97); }
+.btn-outline { background: rgba(255,255,255,.05); border: 1.5px solid var(--card-border); box-shadow: none; }
+.btn-yes { background: linear-gradient(90deg, var(--pink), #ff5ea8) !important; }
+.btn-no { background: rgba(255,255,255,.06) !important; border: 1.5px solid rgba(255,255,255,.2) !important; transition: transform .4s, opacity .4s; }
+.btn-google { background: #fff; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,.2); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; }
+.btn-google img { width: 20px; height: 20px; }
+
+/* ==== GIFT & ENVELOPE ==== */
+.envelope-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; gap: 28px; }
+.envelope-tap-text { font-size: 15px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; font-weight: 600; animation: pulseText 1.6s infinite; }
+@keyframes pulseText { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.envelope { width: 220px; height: 150px; position: relative; cursor: pointer; perspective: 1000px; }
+.envelope-body { position: absolute; inset: 0; background: linear-gradient(135deg, #ff1f7a, #b04dff); border-radius: 12px; box-shadow: inset 0 -4px 20px rgba(0,0,0,.25); }
+.envelope-flap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, #ff6fb5, #b04dff); clip-path: polygon(0 0, 100% 0, 50% 60%); transform-origin: top; transition: transform .9s cubic-bezier(.34,1.2,.64,1); z-index: 3; }
+.envelope-heart { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; z-index: 4; animation: heartBeat 1.4s infinite; }
+.envelope.opening .envelope-flap { transform: rotateX(180deg); }
+.envelope.opening { animation: envelopeOpenPop .9s forwards; }
+@keyframes envelopeOpenPop { 0% { transform: scale(1); } 100% { transform: scale(1.6); opacity: 0; } }
+
+.gift-box { width: 140px; height: 140px; position: relative; cursor: pointer; animation: heartbeat 2s infinite; }
+.gift-box-body { position: absolute; bottom: 0; width: 100%; height: 80%; background: linear-gradient(135deg, var(--pink), var(--purple)); border-radius: 10px; }
+.gift-box-lid { position: absolute; top: 0; width: 110%; left: -5%; height: 30%; background: linear-gradient(180deg, #ff6fb5, var(--pink)); border-radius: 8px; z-index: 2; transition: transform 0.6s; }
+.gift-ribbon-v { position: absolute; top: 0; left: 40%; width: 20%; height: 100%; background: var(--gold); z-index: 1; }
+.gift-ribbon-h { position: absolute; top: 35%; left: 0; width: 100%; height: 15%; background: var(--gold); z-index: 1; }
+.gift-box.opening .gift-box-lid { transform: translateY(-80px) rotate(-15deg); }
+.gift-box.opening { animation: giftPop 1s forwards; }
+@keyframes giftPop { 0% { transform: scale(1); } 100% { transform: scale(0); opacity: 0; } }
+
+/* ==== LETTER ==== */
+.letter-card {
+  width: 100%; max-width: 400px; background: linear-gradient(160deg, rgba(255,31,122,.15), rgba(176,77,255,.12)), rgba(255,255,255,.05);
+  border: 1.5px solid var(--card-border); border-radius: 24px; padding: 26px 22px; position: relative;
+  box-shadow: 0 0 30px rgba(255,31,122,.35); animation: letterIn .9s;
+}
+@keyframes letterIn { from { opacity:0; transform: translateY(40px) scale(.9); } to { opacity:1; transform: translateY(0) scale(1); } }
+.letter-heading { font-family: 'Playfair Display', serif; font-size: 22px; text-align: center; color: var(--gold); margin-bottom: 14px; }
+.letter-from-to { text-align: center; font-size: 13px; color: var(--pink-soft); margin-bottom: 14px; }
+.letter-from-to strong { color: var(--gold); font-size: 15px; }
+.letter-body { font-size: 16.5px; line-height: 1.85; color: #f5e8ee; font-style: italic; text-align: center; padding: 10px 4px; min-height: 80px; }
+.letter-sign { text-align: right; margin-top: 14px; font-size: 14px; color: var(--gold); font-style: italic; }
+
+/* ==== DASHBOARD & LISTS ==== */
+.big-photo { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; overflow: hidden; box-shadow: 0 0 25px var(--pink-glow); position: relative; }
+.big-photo img { width:100%; height:100%; object-fit:cover; }
+.big-photo .ph { width:100%; height:100%; background: radial-gradient(circle, rgba(255,31,122,.35), rgba(0,0,0,.4)); display:flex; align-items:center; justify-content:center; font-size: 46px; }
+
+.wish-item { background: rgba(0,0,0,.3); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; margin-bottom: 12px; text-align: left; position: relative; }
+.wish-item .w-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+.wish-item .w-header strong { color: var(--gold); }
+.wish-item .w-msg { font-size: 14px; color: #ddd; line-height: 1.5; margin-bottom: 10px; }
+.wish-stats { display: flex; gap: 10px; font-size: 11px; color: var(--muted); margin-top: 5px; }
+.wish-stats span { background: rgba(255,255,255,.1); padding: 2px 8px; border-radius: 10px; }
+.reply-box { background: rgba(255,31,122,.15); border-left: 3px solid var(--pink); padding: 8px; border-radius: 4px; font-size: 12px; color: #fff; margin-top: 8px; }
+
+/* ==== LINK & SHARE ==== */
+.link-box { width: 100%; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,.4); border: 1.5px solid var(--card-border); color: var(--muted); font-size: 12px; word-break: break-all; margin-bottom: 12px; font-family: monospace; }
+.share-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.share-btn { padding: 12px; border-radius: 14px; border: none; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; }
+.share-wa { background: #25d366; } .share-tg { background: #229ed9; }
+
+/* ==== MISC ==== */
+.float-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.float-item { position: absolute; opacity: 0; animation: floatUp linear infinite; }
+@keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: .85; } 90% { opacity: .85; } 100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; } }
+
+.toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(120px); background: linear-gradient(90deg, var(--pink), var(--purple)); color: #fff; padding: 12px 22px; border-radius: 30px; font-weight: 600; font-size: 13.5px; box-shadow: 0 0 25px var(--pink-glow); z-index: 9999; transition: transform .4s; pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+.music-btn { position: fixed; top: 14px; right: 14px; width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--card-border); background: rgba(0,0,0,.45); color: #fff; font-size: 18px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
+.back-btn { position: fixed; top: 14px; left: 14px; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,.45); border: 1.5px solid var(--card-border); color: #fff; font-size: 18px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
+
+.countdown-box { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+.cd-item { background: rgba(0,0,0,.5); border: 1px solid var(--pink); padding: 10px; border-radius: 10px; min-width: 60px; }
+.cd-num { font-size: 24px; font-weight: bold; color: var(--gold); }
+.cd-lbl { font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="noticeBanner"></div>
+<div class="float-layer" id="floatLayer"></div>
+<div style="position: fixed; top: 14px; right: 14px; z-index: 100;"><button class="music-btn" id="musicBtn">🔇</button></div>
+
+<!-- SCREEN 1: WELCOME -->
+<div class="screen active" id="screen-welcome">
+  <div class="brand"><h1>WISH MASTER STUDIO</h1><p class="tag">❤️ Love · Surprise · Forever ❤️</p></div>
+  <div class="card">
+    <button class="btn btn-google" id="googleLoginBtn" style="margin-bottom: 20px;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"> Google Login
+    </button>
+    <div style="color: var(--muted); font-size: 12px; margin-bottom: 15px;">অথবা</div>
+    <div class="photo-upload">
+      <div class="photo-circle" id="photoCircle" onclick="document.getElementById('photoInput').click()"><span>📷</span></div>
+      <span class="photo-hint">আপনার ছবি</span>
+      <input type="file" id="photoInput" accept="image/*" hidden />
+    </div>
+    <div class="field">
+      <label>👤 আপনার নাম</label>
+      <input type="text" id="yourName" placeholder="আপনার নাম লিখুন" maxlength="30" />
+      <div class="error" id="errYourName" style="display:none; color:red;">নাম লিখুন</div>
+    </div>
+    <button class="btn btn-outline" id="startBtn">✨ শুরু করুন</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: DASHBOARD -->
+<div class="screen" id="screen-dashboard">
+  <div class="brand"><h1>Dashboard</h1></div>
+  <div class="card" style="max-height: 80vh; overflow-y: auto;">
+    <div class="big-photo" id="dashPhoto"><div class="ph">💕</div></div>
+    <div style="font-size: 14px; color: var(--muted);" id="dashName">Guest</div>
+    <button class="btn btn-outline" onclick="editProfile()" style="padding: 5px; font-size: 12px; margin: 10px auto; width: 120px;">✏️ Edit Profile</button>
+    
+    <button class="btn" onclick="goTo('create')" style="margin-bottom: 20px;">💌 নতুন Wish</button>
+
+    <div style="text-align: left; font-size: 15px; font-weight: 600; color: var(--pink-soft); margin-bottom: 10px;">📋 আমার Wish সমূহ</div>
+    <div id="myWishesList"><div class="empty-state">লোড হচ্ছে...</div></div>
+  </div>
+</div>
+
+<!-- SCREEN 3: CREATE -->
+<div class="screen" id="screen-create">
+  <button class="back-btn" onclick="goTo('dashboard')">←</button>
+  <div class="brand"><h1>Wish তৈরি করুন</h1></div>
+  <div class="card">
+    <div class="field">
+      <label>💖 প্রাপকের নাম</label>
+      <input type="text" id="cReceiver" placeholder="যেমন: মিষ্টি" maxlength="30" />
+    </div>
+    
+    <div class="field" style="background: rgba(255,31,122,.1); padding: 10px; border-radius: 10px;">
+      <label>🤖 AI Love Letter</label>
+      <input type="text" id="aiKeyword" placeholder="যেমন: জন্মদিন, ভালোবাসা" style="margin-bottom: 5px;"/>
+      <button class="btn btn-outline" id="aiGenerateBtn" style="padding: 8px; font-size: 12px;">🪄 AI দিয়ে বার্তা লিখুন</button>
+    </div>
+
+    <div class="field">
+      <label>💌 আপনার বার্তা</label>
+      <textarea id="cMessage" placeholder="তোমার প্রতি আমার ভালোবাসা... ❤️" maxlength="500"></textarea>
+    </div>
+
+    <div class="field">
+      <label>📸 ছবির ফ্রেম</label>
+      <select id="frameChoice">
+        <option value="frame-none">সাধারণ</option>
+        <option value="frame-pink">পিংক লাভ</option>
+        <option value="frame-gold">গোল্ডেন</option>
+        <option value="frame-purple">পার্পল নেইন</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>🎵 মিউজিক</label>
+      <select id="musicChoice">
+        <option value="default">ডিফল্ট</option>
+        <option value="custom">গ্যালারি থেকে</option>
+        <option value="link">MP3 লিংক</option>
+      </select>
+      <input type="file" id="audioUpload" accept="audio/*" hidden />
+      <button class="btn btn-outline" id="audioUploadBtn" style="display: none; padding: 8px; margin-top: 5px;">📂 অডিও সিলেক্ট</button>
+      <input type="url" id="audioLinkInput" placeholder="MP3 লিংক" style="display: none; margin-top: 5px;" />
+    </div>
+    
+    <div class="field" style="background: rgba(255,31,122,.1); padding: 10px; border-radius: 10px;">
+      <label>⏱️ Surprise Countdown (ঐচ্ছিক)</label>
+      <input type="datetime-local" id="countdownTime" />
+    </div>
+
+    <button class="btn" id="createWishBtn">🎁 Wish তৈরি করুন</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: COUNTDOWN -->
+<div class="screen" id="screen-countdown">
+  <div class="brand"><h1>অপেক্ষা করুন!</h1></div>
+  <p style="text-align:center; color:var(--muted); margin-bottom:20px;">আপনার সারপ্রাইজ খুলতে বাকি আছে</p>
+  <div class="countdown-box" id="countdownDisplay">
+    <div class="cd-item"><div class="cd-num" id="cdDays">0</div><div class="cd-lbl">দিন</div></div>
+    <div class="cd-item"><div class="cd-num" id="cdHours">0</div><div class="cd-lbl">ঘণ্টা</div></div>
+    <div class="cd-item"><div class="cd-num" id="cdMins">0</div><div class="cd-lbl">মিনিট</div></div>
+    <div class="cd-item"><div class="cd-num" id="cdSecs">0</div><div class="cd-lbl">সেকেন্ড</div></div>
+  </div>
+</div>
+
+<!-- SCREEN 5: GIFT BOX -->
+<div class="screen" id="screen-gift">
+  <div class="envelope-stage">
+    <div class="envelope-tap-text">Tap To Open Gift</div>
+    <div class="gift-box" id="giftBox">
+      <div class="gift-box-body"></div><div class="gift-ribbon-v"></div><div class="gift-ribbon-h"></div><div class="gift-box-lid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 6: ENVELOPE -->
+<div class="screen" id="screen-envelope">
+  <div class="envelope-stage">
+    <div class="envelope-tap-text">Tap To Open Letter</div>
+    <div class="envelope" id="envelope">
+      <div class="envelope-body"></div><div class="envelope-flap"></div><div class="envelope-heart">💖</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 7: LOVE LETTER -->
+<div class="screen" id="screen-letter">
+  <div class="letter-card" id="downloadCard">
+    <div class="letter-heading">💌 Love Letter</div>
+    <div class="letter-from-to"><strong id="letterTo">প্রিয়</strong><br>— <strong id="letterFrom">From</strong></div>
+    <div class="letter-body typing-text" id="letterBody"></div>
+    <div class="letter-sign">— <span id="letterSign">Sender</span></div>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-outline" id="downloadBtn" style="flex: 1;">📥 সেভ</button>
+      <button class="btn" id="letterNextBtn" style="flex: 2;">➡️ NEXT</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 8: QUESTION -->
+<div class="screen" id="screen-question">
+  <div class="brand"><h1>Love Question</h1></div>
+  <div class="big-photo" id="questionPhoto" style="border: 4px solid var(--pink);"><div class="ph">💕</div></div>
+  <div class="question-title" style="font-size:22px; color:var(--gold); margin:15px 0;">তুমি কি আমাকে ভালোবাসো?</div>
+  <button class="btn btn-yes" id="yesBtn" style="max-width:340px;">💖 হ্যাঁ</button>
+  <div style="height:10px"></div>
+  <button class="btn btn-no" id="noBtn" style="max-width:340px;">💔 না</button>
+</div>
+
+<!-- SCREEN 9: MESSAGE INPUT -->
+<div class="screen" id="screen-message">
+  <div class="brand"><h1>বার্তা পাঠান</h1></div>
+  <div class="card">
+    <div class="field">
+      <label>💬 আপনার বার্তা</label>
+      <textarea id="replyMessage" placeholder="আমার মন থেকে বলছি..."></textarea>
+    </div>
+    <button class="btn" id="sendMsgBtn">💌 SEND MESSAGE</button>
+  </div>
+</div>
+
+<!-- SCREEN 10: FINAL -->
+<div class="screen" id="screen-final">
+  <div class="brand"><h1>অভিনন্দন!</h1></div>
+  <div class="card">
+    <div class="typing-text" id="finalBody" style="margin-bottom: 20px; color:var(--gold);"></div>
+    <button class="btn" id="finalShareBtn">🔗 Share Link</button>
+    <button class="btn btn-outline" id="finalBackBtn" style="margin-top:10px;">← Dashboard</button>
+  </div>
+</div>
+
+<!-- SCREEN 11: SHARE LINK -->
+<div class="screen" id="screen-share">
+  <div class="brand"><h1>🎉 লিংক তৈরি!</h1></div>
+  <div class="card">
+    <div class="link-box" id="shareLinkBox"></div>
+    <div class="share-row">
+      <button class="share-btn share-wa" id="waBtn">📱 WhatsApp</button>
+      <button class="share-btn share-tg" id="tgBtn">✈️ Telegram</button>
+    </div>
+    <button class="btn btn-outline" id="copyLinkBtn" style="margin-top:8px;">📋 Copy</button>
+    <button class="btn" id="openLinkBtn" style="margin-top:8px;">👁️ Preview</button>
+    <button class="btn btn-outline" id="newWishBtn" style="margin-top:8px;">✨ Dashboard</button>
+  </div>
+</div>
+
+<!-- SCREEN 12: RECEIVED -->
+<div class="screen" id="screen-received-gift">
+  <div class="envelope-stage">
+    <div class="envelope-tap-text">আপনার জন্য উপহার!</div>
+    <div class="gift-box" id="receivedGiftBox">
+      <div class="gift-box-body"></div><div class="gift-ribbon-v"></div><div class="gift-ribbon-h"></div><div class="gift-box-lid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-received">
+  <div class="brand"><h1>💖 একটি Wish</h1></div>
+  <div class="big-photo" id="receivedPhoto"><div class="ph">💕</div></div>
+  <div class="letter-card">
+    <div class="letter-from-to"><strong id="receivedTo">প্রিয়</strong><br>— <strong id="receivedFrom">From</strong></div>
+    <div class="letter-body typing-text" id="receivedMsg"></div>
+    
+    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,.1); padding-top: 15px;">
+      <textarea id="recvReplyInput" placeholder="আপনার উত্তর..." style="width: 100%; padding: 10px; border-radius: 10px; background: rgba(0,0,0,.4); border: 1px solid var(--card-border); color: #fff;"></textarea>
+      <button class="btn btn-yes" id="recvSendReplyBtn" style="margin-top: 10px;">💌 Reply</button>
+    </div>
+    <button class="btn btn-outline" id="recvMakeOwnBtn" style="margin-top:15px;">🎁 আমিও Wish বানাই</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     FIREBASE SDK & LOGIC
+     ============================================================ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, query, where, collection, getDocs, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8928SOBZ5al4NaoR8Vq-8wepXh-0BGF4",
+  authDomain: "wish-4e41b.firebaseapp.com",
+  projectId: "wish-4e41b",
+  storageBucket: "wish-4e41b.firebasestorage.app",
+  messagingSenderId: "321469144325",
+  appId: "1:321469144325:web:62cce1d7b810af7613eb6c",
+  measurementId: "G-1QRMLEH5XL"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// --- AUTH ---
+window.fbLoginGoogle = () => signInWithPopup(auth, provider);
+window.fbLogout = () => signOut(auth);
+window.fbOnAuth = (cb) => onAuthStateChanged(auth, cb);
+
+// --- FIRESTORE ---
+window.fbSaveWish = async (payload) => {
+  const id = 'w_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  await setDoc(doc(db, 'wishes', id), { ...payload, views: 0, createdAt: serverTimestamp() });
+  return id;
+};
+
+window.fbLoadWish = async (id) => {
+  const snap = await getDoc(doc(db, 'wishes', id));
+  if (!snap.exists()) return null;
+  await updateDoc(doc(db, 'wishes', id), { views: increment(1) });
+  return { id: snap.id, ...snap.data() };
+};
+
+window.fbGetMyWishes = async (uid, senderName) => {
+  let q;
+  if (uid) q = query(collection(db, 'wishes'), where('uid', '==', uid));
+  else q = query(collection(db, 'wishes'), where('sender', '==', senderName));
+  const snap = await getDocs(q);
+  const list = [];
+  snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+  return list.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+};
+
+window.fbUpdateReply = async (wishId, replyText) => { await updateDoc(doc(db, 'wishes', wishId), { replyText }); };
+window.fbUpdateWish = async (wishId, data) => { await updateDoc(doc(db, 'wishes', wishId), data); };
+window.fbDeleteWish = async (wishId) => { await deleteDoc(doc(db, 'wishes', wishId)); };
+
+// Global Notice & AI
+window.fbGetNotice = async () => {
+  const snap = await getDoc(doc(db, 'settings', 'notice'));
+  return snap.exists() ? snap.data().text : null;
+};
+
+window.fbGetAiTemplates = async () => {
+  const snap = await getDoc(doc(db, 'settings', 'ai_templates'));
+  return snap.exists() ? snap.data().list : [
+    "তোমার মতো একজন মানুষ পাশে থাকলে জীবনের প্রতিটা দিন ভালোবাসার মনে হয়। {keyword} উপলক্ষে তোমাকে অসংখ্য শুভেচ্ছা।",
+    "তুমি আমার জীবনের সবচেয়ে সুন্দর উপহার। {keyword} এর দিনে বলছি, তোমাকে অনেক ভালোবাসা।"
+  ];
+};
+
+window.firebaseReady = true;
+</script>
+
+<script>
+const $ = id => document.getElementById(id);
+const state = {
+  user: { uid: null, name: '', photo: '' },
+  wish: { id: '', to: '', from: '', message: '', photo: '', extra: '', audioData: '', audioLink: '', countdown: '', frame: 'frame-none' }
+};
+
+// --- UTILS ---
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function goTo(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'dashboard') loadMyWishes();
+}
+
+// --- FLOATING HEARTS ---
+setInterval(() => {
+  const el = document.createElement('div');
+  el.className = 'float-item'; el.textContent = ['❤️','💖','🌹','✨'][Math.floor(Math.random()*4)];
+  el.style.left = Math.random()*100 + '%'; el.style.bottom = '-40px';
+  el.style.fontSize = (14 + Math.random()*20) + 'px';
+  el.style.animationDuration = (7 + Math.random()*6) + 's';
+  $('floatLayer').appendChild(el); setTimeout(() => el.remove(), 12000);
+}, 700);
+
+// --- TYPING ---
+function typeWriter(elId, text, cb) {
+  const el = $(elId); el.innerHTML = ''; let i = 0;
+  function type() {
+    if (i < text.length) { el.innerHTML = text.substring(0, i+1) + '<span class="cursor"></span>'; i++; setTimeout(type, 40); }
+    else { el.innerHTML = text; if(cb) cb(); }
+  }
+  type();
+}
+
+// --- PHOTO ---
+$('photoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas'); const MAX = 300;
+      let w = img.width, h = img.height;
+      if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      state.user.photo = canvas.toDataURL('image/jpeg', 0.8);
+      $('photoCircle').classList.add('filled');
+      $('photoCircle').innerHTML = `<img src="${state.user.photo}">`;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+// --- GOOGLE LOGIN ---
+$('googleLoginBtn').addEventListener('click', async () => {
+  try { await window.fbLoginGoogle(); } catch (err) { toast('❌ লগইন ব্যর্থ'); }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const check = setInterval(() => {
+    if (window.firebaseReady) {
+      clearInterval(check);
+      window.fbOnAuth((user) => {
+        if (user) {
+          state.user.uid = user.uid; state.user.name = user.displayName; state.user.photo = user.photoURL;
+          $('dashName').textContent = state.user.name;
+          if (state.user.photo) $('dashPhoto').innerHTML = `<img src="${state.user.photo}">`;
+          goTo('dashboard');
+        }
+      });
+      loadGlobalNotice();
+    }
+  }, 100);
+});
+
+// --- NAME LOGIN ---
+$('startBtn').addEventListener('click', () => {
+  const name = $('yourName').value.trim();
+  if (name.length < 2) return toast('⚠️ নাম দিন');
+  state.user.name = name;
+  $('dashName').textContent = name;
+  if (state.user.photo) $('dashPhoto').innerHTML = `<img src="${state.user.photo}">`;
+  goTo('dashboard');
+});
+
+// --- PROFILE EDIT ---
+window.editProfile = () => {
+  const newName = prompt('নতুন নাম দিন:', state.user.name);
+  if (newName && newName.trim().length >= 2) {
+    state.user.name = newName.trim(); $('dashName').textContent = state.user.name;
+    toast('✅ নাম পরিবর্তন হয়েছে');
+  }
+};
+
+// --- LOAD MY WISHES ---
+async function loadMyWishes() {
+  const list = $('myWishesList');
+  list.innerHTML = '<div class="empty-state" style="padding:20px;font-size:13px;">⏳ লোড হচ্ছে...</div>';
+  if (!window.firebaseReady) return;
+  try {
+    const wishes = await window.fbGetMyWishes(state.user.uid, state.user.name);
+    if (!wishes.length) {
+      list.innerHTML = '<div class="empty-state" style="padding:20px;font-size:13px;">এখনো কোনো Wish তৈরি করেননি</div>';
+      return;
+    }
+    
+    list.innerHTML = wishes.map(w => `
+      <div class="wish-item">
+        <div class="w-header">
+          <span>To: <strong>${w.receiver}</strong></span>
+        </div>
+        <div class="w-msg">"${w.message.substring(0, 30)}..."</div>
+        <div class="wish-stats">
+          <span>👁️ ${w.views || 0} Views</span>
+          ${w.replyText ? '<span style="color:var(--success);">💬 Replied</span>' : ''}
+        </div>
+        ${w.replyText ? `<div class="reply-box"><strong>💬 রিপ্লাই:</strong> ${w.replyText}</div>` : ''}
+      </div>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="empty-state" style="color:#ff6b9d; font-size:13px;">লোড ব্যর্থ হয়েছে</div>';
+  }
+}
+
+// --- AI GENERATOR ---
+$('aiGenerateBtn').addEventListener('click', async () => {
+  const keyword = $('aiKeyword').value.trim();
+  if (!keyword) return toast('⚠️ কীওয়ার্ড দিন');
+  toast('🪄 এআই লিখছে...');
+  
+  try {
+    const templates = await window.fbGetAiTemplates();
+    if (templates && templates.length > 0) {
+      const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+      $('cMessage').value = randomTemplate.replace(/{keyword}/g, keyword);
+    } else {
+      $('cMessage').value = `তোমার জন্য রইলো অনেক ভালোবাসা। ${keyword} উপলক্ষে শুভেচ্ছা!`;
+    }
+    toast('✅ বার্তা তৈরি হয়েছে');
+  } catch(e) {
+    $('cMessage').value = `তোমার জন্য রইলো অনেক ভালোবাসা। ${keyword} উপলক্ষে শুভেচ্ছা!`;
+    toast('✅ বার্তা তৈরি হয়েছে');
+  }
+});
+
+// --- CREATE ---
+$('musicChoice').addEventListener('change', (e) => {
+  $('audioUploadBtn').style.display = e.target.value === 'custom' ? 'block' : 'none';
+  $('audioLinkInput').style.display = e.target.value === 'link' ? 'block' : 'none';
+});
+$('audioUploadBtn').addEventListener('click', () => $('audioUpload').click());
+$('audioUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 2 * 1024 * 1024) return toast('❌ অডিও 2MB এর কম হতে হবে');
+  const reader = new FileReader();
+  reader.onload = (ev) => { state.wish.audioData = ev.target.result; toast('✅ যুক্ত হয়েছে'); };
+  reader.readAsDataURL(file);
+});
+
+$('createWishBtn').addEventListener('click', () => {
+  const to = $('cReceiver').value.trim();
+  const msg = $('cMessage').value.trim();
+  if (to.length < 2 || msg.length < 5) return toast('⚠️ তথ্য দিন');
+  
+  state.wish.to = to; state.wish.from = state.user.name; state.wish.message = msg; state.wish.photo = state.user.photo;
+  state.wish.frame = $('frameChoice').value;
+  state.wish.countdown = $('countdownTime').value;
+  
+  const mChoice = $('musicChoice').value;
+  if (mChoice === 'link') state.wish.audioLink = $('audioLinkInput').value.trim();
+  else if (mChoice === 'default') { state.wish.audioData = ''; state.wish.audioLink = ''; }
+
+  $('letterTo').textContent = to; $('letterFrom').textContent = state.user.name; $('letterSign').textContent = state.user.name;
+  goTo('gift');
+});
+
+// --- GIFT & ENVELOPE ---
+$('giftBox').addEventListener('click', function () {
+  this.classList.add('opening');
+  setTimeout(() => { goTo('envelope'); this.classList.remove('opening'); }, 1000);
+});
+$('envelope').addEventListener('click', function () {
+  this.classList.add('opening');
+  setTimeout(() => { goTo('letter'); typeWriter('letterBody', `"${state.wish.message}"`); this.classList.remove('opening'); }, 950);
+});
+
+// --- DOWNLOAD ---
+$('downloadBtn').addEventListener('click', () => {
+  html2canvas($('downloadCard'), { backgroundColor: '#1a0025', scale: 2 }).then(canvas => {
+    const link = document.createElement('a'); link.download = `Wish_${state.wish.to}.png`;
+    link.href = canvas.toDataURL(); link.click(); toast('✅ সেভ হয়েছে');
+  });
+});
+
+// --- QUESTION & MSG ---
+$('letterNextBtn').addEventListener('click', () => { $('questionPhoto').innerHTML = `<img src="${state.wish.photo}" class="${state.wish.frame}">`; goTo('question'); });
+$('yesBtn').addEventListener('click', () => goTo('message'));
+$('noBtn').addEventListener('click', function () {
+  this.style.opacity = '.3';
+  setTimeout(() => { toast('😉 শুধু হ্যাঁ আছে!'); goTo('message'); }, 650);
+});
+$('sendMsgBtn').addEventListener('click', () => {
+  const msg = $('replyMessage').value.trim();
+  if (msg.length < 2) return toast('⚠️ বার্তা লিখুন');
+  state.wish.extra = msg;
+  goTo('final');
+  typeWriter('finalBody', 'তোমার বার্তা সংরক্ষিত হয়েছে ❤️');
+});
+
+// --- SHARE ---
+$('finalShareBtn').addEventListener('click', async () => {
+  const payload = {
+    sender: state.wish.from, receiver: state.wish.to, message: state.wish.message, photo: state.wish.photo, extra: state.wish.extra, uid: state.user.uid,
+    audioData: state.wish.audioData, audioLink: state.wish.audioLink, countdown: state.wish.countdown, frame: state.wish.frame
+  };
+  try {
+    const id = await window.fbSaveWish(payload);
+    // Vercel বা যেকোনো হোস্টিং-এ লিংক তৈরি
+    const link = window.location.origin + window.location.pathname + '?id=' + id;
+    window._shareLink = link;
+    $('shareLinkBox').textContent = link;
+    goTo('share'); toast('🎉 লিংক তৈরি');
+  } catch (err) { toast('❌ ব্যর্থ'); }
+});
+
+// Share Buttons
+$('copyLinkBtn').onclick = () => { navigator.clipboard.writeText(window._shareLink); toast('✅ কপি'); };
+$('waBtn').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(window._shareLink));
+$('tgBtn').onclick = () => window.open('https://t.me/share/url?url=' + encodeURIComponent(window._shareLink));
+$('openLinkBtn').onclick = () => window.open(window._shareLink, '_blank');
+$('newWishBtn').onclick = () => goTo('dashboard');
+
+// --- RECEIVED LOGIC ---
+let currentReceivedId = null;
+
+async function loadWishFromParams() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const hash = window.location.hash;
+
+  // ১. যদি URL-এ id থাকে (Firebase Link)
+  if (id) {
+    try {
+      const data = await window.fbLoadWish(id);
+      if (!data) { toast('❌ Wish পাওয়া যায়নি বা মুছে ফেলা হয়েছে'); return false; }
+      currentReceivedId = id;
+      showReceivedGift(data);
+      return true;
+    } catch (err) { 
+      console.error("Firebase Load Error:", err);
+      toast('❌ লিংক লোড করতে সমস্যা হচ্ছে'); 
+      return false; 
+    }
+  }
+
+  // ২. যদি URL-এ #wish= থাকে (Base64 Backup Link)
+  if (hash.startsWith('#wish=')) {
+    try {
+      const raw = hash.slice(6);
+      const json = decodeURIComponent(escape(atob(raw)));
+      const data = JSON.parse(json);
+      showReceivedGift({
+        sender: data.sender || data.s, receiver: data.receiver || data.r, 
+        message: data.message || data.m, photo: data.photo || data.p, 
+        extra: data.extra || data.e, frame: data.frame || 'frame-none'
+      });
+      return true;
+    } catch (err) { toast('❌ লিংক ভাঙা বা অসম্পূর্ণ'); return false; }
+  }
+  return false;
+}
+
+function showReceivedGift(data) {
+  // কাউন্টডাউন চেক
+  if (data.countdown) {
+    const target = new Date(data.countdown).getTime();
+    if (Date.now() < target) {
+      startCountdown(target, () => {
+        goTo('received-gift');
+      });
+      return;
+    }
+  }
+
+  goTo('received-gift');
+  $('receivedGiftBox').onclick = function () {
+    this.classList.add('opening');
+    setTimeout(() => {
+      renderReceived(data);
+      this.classList.remove('opening');
+    }, 1000);
+  };
+}
+
+function startCountdown(target, onFinish) {
+  goTo('countdown');
+  const interval = setInterval(() => {
+    const now = Date.now();
+    const diff = target - now;
+    if (diff <= 0) {
+      clearInterval(interval);
+      onFinish();
+      return;
+    }
+    $('cdDays').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+    $('cdHours').textContent = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    $('cdMins').textContent = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    $('cdSecs').textContent = Math.floor((diff % (1000 * 60)) / 1000);
+  }, 1000);
+}
+
+function renderReceived(data) {
+  $('receivedTo').textContent = data.receiver || 'প্রিয়';
+  $('receivedFrom').textContent = data.sender || 'কেউ';
+  if (data.photo) $('receivedPhoto').innerHTML = `<img src="${data.photo}" class="${data.frame || 'frame-none'}">`;
+  goTo('received');
+  typeWriter('receivedMsg', `"${data.message || '❤️'}"`);
+
+  if (data.audioData || data.audioLink) setupCustomAudio(data.audioData, data.audioLink);
+  else setupDefaultMusic();
+
+  if (data.replyText) {
+    $('recvReplyInput').value = data.replyText;
+    $('recvReplyInput').disabled = true;
+    $('recvSendReplyBtn').textContent = '✅ দেওয়া হয়েছে';
+    $('recvSendReplyBtn').disabled = true;
+  }
+}
+
+// Reply Submit
+$('recvSendReplyBtn').onclick = async () => {
+  const reply = $('recvReplyInput').value.trim();
+  if (!reply || !currentReceivedId) return;
+  try {
+    await window.fbUpdateReply(currentReceivedId, reply);
+    toast('💌 পাঠানো হয়েছে');
+    $('recvSendReplyBtn').disabled = true;
+    $('recvSendReplyBtn').textContent = '✅ দেওয়া হয়েছে';
+  } catch (err) { toast('❌ ব্যর্থ'); }
+};
+
+// --- MUSIC ---
+let audioCtx, musicPlaying = false, musicTimer = null, audioPlayer = null;
+function setupCustomAudio(d, l) {
+  if (audioPlayer) audioPlayer.pause();
+  audioPlayer = new Audio(d || l);
+  audioPlayer.loop = true;
+  $('musicBtn').onclick = () => {
+    if (audioPlayer.paused) { audioPlayer.play(); $('musicBtn').textContent = '🔊'; }
+    else { audioPlayer.pause(); $('musicBtn').textContent = '🔇'; }
+  };
+}
+function setupDefaultMusic() {
+  $('musicBtn').onclick = () => {
+    if (musicPlaying) { musicPlaying = false; clearTimeout(musicTimer); audioCtx.close(); $('musicBtn').textContent = '🔇'; }
+    else {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33];
+      let i = 0; musicPlaying = true;
+      const playNext = () => {
+        if (!musicPlaying) return;
+        const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        osc.frequency.value = notes[i % notes.length];
+        g.gain.setValueAtTime(0, audioCtx.currentTime);
+        g.gain.linearRampToValueAtTime(0.055, audioCtx.currentTime + 0.1);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 1.3);
+        i++; musicTimer = setTimeout(playNext, 550);
+      };
+      playNext();
+      $('musicBtn').textContent = '🔊';
+    }
+  };
+}
+
+// --- NOTICE ---
+async function loadGlobalNotice() {
+  try {
+    const text = await window.fbGetNotice();
+    if (text) {
+      $('noticeBanner').textContent = '📢 ' + text;
+      $('noticeBanner').style.display = 'block';
+    }
+  } catch (e) {}
+}
+
+// --- INIT (সবচেয়ে গুরুত্বপূর্ণ অংশ) ---
+window.addEventListener('DOMContentLoaded', async () => {
+  // Firebase রেডি হওয়া পর্যন্ত অপেক্ষা করা
+  await new Promise(r => {
+    if (window.firebaseReady) return r();
+    const check = setInterval(() => { if (window.firebaseReady) { clearInterval(check); r(); } }, 100);
+    setTimeout(() => { clearInterval(check); r(); }, 3000);
+  });
+
+  // চেক করা হচ্ছে URL-এ Wish আছে কিনা
+  const hasWish = await loadWishFromParams();
+  
+  // যদি Wish লোড না হয়, তবেই Welcome স্ক্রিন দেখাবে
+  if (!hasWish) {
+    goTo('welcome');
+  }
+});
+</script>
+</body>
+</html>
